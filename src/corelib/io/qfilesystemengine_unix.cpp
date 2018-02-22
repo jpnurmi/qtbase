@@ -97,16 +97,21 @@ extern "C" NSString *NSTemporaryDirectory();
 #  define FICLONE       _IOW(0x94, 9, int)
 #endif
 
-#  if !QT_CONFIG(renameat2) && defined(SYS_renameat2)
+#  if 1 // GEORDI
+#    undef SYS_renameat2
+#    undef SYS_statx
+#  else
+#    if !QT_CONFIG(renameat2) && defined(SYS_renameat2)
 static int renameat2(int oldfd, const char *oldpath, int newfd, const char *newpath, unsigned flags)
 { return syscall(SYS_renameat2, oldfd, oldpath, newfd, newpath, flags); }
-#  endif
+#    endif
 
-#  if !QT_CONFIG(statx) && defined(SYS_statx) && QT_HAS_INCLUDE(<linux/stat.h>)
-#    include <linux/stat.h>
+#    if !QT_CONFIG(statx) && defined(SYS_statx) && QT_HAS_INCLUDE(<linux/stat.h>)
+#      include <linux/stat.h>
 static int statx(int dirfd, const char *pathname, int flag, unsigned mask, struct statx *statxbuf)
 { return syscall(SYS_statx, dirfd, pathname, flag, mask, statxbuf); }
-#  endif
+#    endif
+#  endif // GEORDI
 #endif
 
 #ifndef STATX_BASIC_STATS
