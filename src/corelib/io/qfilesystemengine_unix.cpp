@@ -97,7 +97,7 @@ extern "C" NSString *NSTemporaryDirectory();
 #  define FICLONE       _IOW(0x94, 9, int)
 #endif
 
-#  if defined(Q_OS_ANDROID)
+#  if defined(Q_OS_ANDROID) || !QT_CONFIG(statx)
 // renameat2() and statx() are disabled on Android because quite a few systems
 // come with sandboxes that kill applications that make system calls outside a
 // whitelist and several Android vendors can't be bothered to update the list.
